@@ -1,34 +1,44 @@
 # GameBoost Arena
 
-تطبيق Android عربي لمساعدة اللاعبين على تنظيم وتشغيل ألعابهم، مع واجهة داكنة بطابع ألعاب، تحسين أداء تجريبي، ومعاينة لقائمة عائمة فوق الألعاب.
+GameBoost Arena is an Expo / React Native Android gaming assistant interface with an Arabic RTL gaming dashboard, animated branded splash screen, local PNG assets, calm background audio, performance-mode controls, and a floating-overlay preview.
 
-## المزايا
+> This repository contains the application source and EAS build configuration. Android system restrictions still apply to overlay access and background-process management.
 
-- شاشة بداية متحركة يظهر فيها اسم `GAME BOOST` حول شعار PNG.
-- واجهة عربية RTL بطابع نيون داكن.
-- بطاقات للألعاب مع نسبة تقدم وزر تشغيل.
-- زر تفعيل وضع التحسين.
-- معاينة للقائمة العائمة فوق الألعاب.
-- موسيقى خلفية هادئة ومؤثرات صوتية محلية.
-- أصول الصور منظمة في مجلدات PNG حقيقية.
-- إعدادات Android وصلاحيات النظام موضحة في `app.config.ts`.
-- Workflow جاهز لبناء APK عبر GitHub Actions وExpo EAS.
+## Tech Stack
 
-## هيكل المشروع
+- Expo SDK 57
+- React Native 0.86
+- Expo Router
+- TypeScript
+- NativeWind
+- Expo Audio
+- Expo EAS Build
+- GitHub Actions
+
+## Project Structure
 
 ```text
-app/                         شاشات Expo Router
-components/                  مكونات الواجهة، ومنها شاشة البداية
-assets/images/backgrounds/   خلفيات PNG
-assets/images/icons/         أيقونات PNG شفافة
-assets/images/system/        أيقونات Android وWeb وشاشة البداية
-assets/audio/music/          الموسيقى الخلفية
-assets/audio/effects/        المؤثرات الصوتية
-eas.json                     إعدادات بناء APK/AAB
-.github/workflows/            Workflow البناء التلقائي
+app/                         Expo Router screens and layouts
+components/                  Reusable UI components
+assets/images/backgrounds/   PNG background artwork
+assets/images/icons/         Transparent PNG UI icons
+assets/images/system/        Android, splash, launcher, and web assets
+assets/audio/music/          Background music
+assets/audio/effects/        UI and boost sound effects
+app.config.ts                Expo and Android configuration
+eas.json                     EAS APK/AAB profiles
+.github/workflows/            GitHub Actions APK workflow
+GITHUB_APK_GUIDE.md          Arabic build handoff guide
 ```
 
-## التشغيل المحلي
+## Requirements
+
+- Node.js 22+
+- pnpm 9.12+
+- An Expo account for EAS builds
+- An Expo access token for GitHub Actions builds
+
+## Local Development
 
 ```bash
 pnpm install
@@ -37,32 +47,59 @@ pnpm lint
 pnpm dev:metro
 ```
 
-## إنشاء APK
+The Expo web development server uses port `8081`. The project also retains the starter server configuration on port `3000`.
 
-هذا المشروع يستخدم Expo EAS. من جهازك:
+## Build an Android APK
+
+The `preview` profile creates an installable APK:
 
 ```bash
 npx eas-cli@latest login
 npx eas-cli@latest build --platform android --profile preview
 ```
 
-ملف `preview` ينتج APK قابلاً للتثبيت على Android. ملف `production` مخصص لإنتاج AAB للنشر في Google Play.
+The `production` profile is configured for an Android App Bundle:
 
-## البناء من GitHub Actions
+```bash
+npx eas-cli@latest build --platform android --profile production
+```
 
-1. أنشئ Expo Access Token من حساب Expo.
-2. في مستودع GitHub افتح: **Settings → Secrets and variables → Actions**.
-3. أضف Secret باسم `EXPO_TOKEN` وضع قيمة الرمز داخله.
-4. افتح تبويب **Actions**.
-5. شغّل Workflow باسم **Build GameBoost APK**.
-6. بعد انتهاء البناء سيظهر رابط التحميل في سجل العملية.
+## GitHub Actions
 
-## صلاحيات Android
+The workflow is located at `.github/workflows/build-apk.yml` and can be started manually from the **Actions** tab.
 
-يطلب التطبيق الصلاحيات ذات الصلة بالظهور فوق التطبيقات وإدارة التطبيقات في الخلفية داخل إعدادات Android. هذه صلاحيات خاصة ويجب أن يوافق عليها المستخدم من إعدادات النظام. تختلف إمكانية إغلاق التطبيقات الأخرى حسب إصدار Android والشركة المصنعة؛ لذلك تعرض الواجهة الحالية معاينة آمنة ولا تدّعي تجاوز قيود النظام.
+Before running it, add the following repository secret:
 
-## الملفات المهمة
+```text
+EXPO_TOKEN=<Expo access token>
+```
 
-- [دليل البناء التفصيلي](GITHUB_APK_GUIDE.md)
-- [سجل الصور والصوت](assets/ASSET_MANIFEST.md)
-- [فهرس ملفات الصور](assets/IMAGE_ASSET_URLS.json)
+The workflow installs dependencies, runs TypeScript validation, and starts the EAS Android APK build.
+
+## Android Permissions
+
+`app.config.ts` declares permissions related to notifications, overlay access, usage statistics, background-process handling, and audio playback. Some of these are special Android permissions and require explicit user approval from Android system settings. Android vendors and OS versions may restrict or ignore background-process termination requests.
+
+The floating menu in the current UI is a safe in-app preview. A production system-wide overlay requires a native Android implementation and a user-approved overlay permission.
+
+## Asset Policy
+
+All app artwork is stored as real image files rather than code-drawn icons:
+
+- Backgrounds and system artwork are PNG files.
+- UI icons use transparent PNG files.
+- Audio files are stored locally under `assets/audio`.
+- Asset locations are documented in `assets/ASSET_MANIFEST.md` and `assets/IMAGE_ASSET_URLS.json`.
+
+## Validation
+
+The current source passes:
+
+```bash
+pnpm check
+pnpm lint
+```
+
+## License
+
+This project is private application source prepared for the repository owner. Add a license before distributing the source publicly.
