@@ -28,7 +28,7 @@ export function GameBoostSplash({ onFinished }: GameBoostSplashProps) {
 
   return (
     <ImageBackground
-      source={require("../assets/images/gameboost-home-background.png")}
+      source={require("../assets/images/backgrounds/home-background.png")}
       resizeMode="cover"
       style={styles.root}
     >
@@ -40,7 +40,7 @@ export function GameBoostSplash({ onFinished }: GameBoostSplashProps) {
           </Animated.Text>
           <Animated.View style={[styles.logoWrap, { opacity: logoOpacity, transform: [{ scale: logoScale }] }]}>
             <Animated.View style={[styles.logoGlow, { opacity: glowOpacity }]} />
-            <Image source={require("../assets/images/icon-gamepad.png")} style={styles.logo} />
+            <Image source={require("../assets/images/icons/gamepad.png")} style={styles.logo} />
           </Animated.View>
           <Animated.Text style={[styles.wordmark, styles.rightWord, { transform: [{ translateX: rightX }] }]}>
             BOOST

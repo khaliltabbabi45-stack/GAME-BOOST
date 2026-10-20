@@ -1,35 +1,18 @@
 {
   "format": "PNG",
+  "structure": {
+    "backgrounds": "assets/images/backgrounds",
+    "icons": "assets/images/icons",
+    "system": "assets/images/system"
+  },
   "local_assets": [
-    {
-      "purpose": "home_background",
-      "path": "assets/images/gameboost-home-background.png",
-      "size": "1440x2560",
-      "alpha": false
-    },
-    {
-      "purpose": "floating_panel_background",
-      "path": "assets/images/gameboost-floating-panel-background.png",
-      "size": "2560x1440",
-      "alpha": false
-    },
-    {
-      "purpose": "gamepad_icon",
-      "path": "assets/images/icon-gamepad.png",
-      "size": "1920x1920",
-      "alpha": true
-    },
-    {
-      "purpose": "performance_boost_icon",
-      "path": "assets/images/icon-performance-boost.png",
-      "size": "1920x1920",
-      "alpha": true
-    },
-    {
-      "purpose": "floating_overlay_icon",
-      "path": "assets/images/icon-floating-overlay.png",
-      "size": "1920x1920",
-      "alpha": true
-    }
+    { "purpose": "home_background", "path": "assets/images/backgrounds/home-background.png", "size": "1440x2560", "alpha": false },
+    { "purpose": "floating_panel_background", "path": "assets/images/backgrounds/floating-panel-background.png", "size": "2560x1440", "alpha": false },
+    { "purpose": "splash_background", "path": "assets/images/backgrounds/splash-background.png", "size": "1440x2560", "alpha": false },
+    { "purpose": "gamepad_icon", "path": "assets/images/icons/gamepad.png", "size": "1920x1920", "alpha": true },
+    { "purpose": "performance_boost_icon", "path": "assets/images/icons/performance-boost.png", "size": "1920x1920", "alpha": true },
+    { "purpose": "floating_overlay_icon", "path": "assets/images/icons/floating-overlay.png", "size": "1920x1920", "alpha": true },
+    { "purpose": "android_app_icon", "path": "assets/images/system/app-icon.png", "size": "1920x1920", "alpha": true },
+    { "purpose": "android_splash_icon", "path": "assets/images/system/splash-icon.png", "size": "1920x1920", "alpha": true }
   ]
 }

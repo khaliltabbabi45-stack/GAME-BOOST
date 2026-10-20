@@ -31,7 +31,7 @@ const env = {
   appName: "GameBoost Arena",
   appSlug: "gameboost",
   // S3 URL of the app logo - set this to the URL returned by generate_image when creating custom logo
-  // Leave empty to use the default icon from assets/images/icon.png
+  // Leave empty to use the local PNG icon from assets/images/system/app-icon.png
   logoUrl: "",
   scheme: schemeFromBundleId,
   iosBundleId: bundleId,
@@ -65,7 +65,7 @@ const config: ExpoConfig = {
   version: "1.0.0",
   extra: publicRuntime,
   orientation: "portrait",
-  icon: "./assets/images/icon.png",
+  icon: "./assets/images/system/app-icon.png",
   scheme: env.scheme,
   userInterfaceStyle: "automatic",
   ios: {
@@ -78,9 +78,9 @@ const config: ExpoConfig = {
   android: {
     adaptiveIcon: {
       backgroundColor: "#10091c",
-      foregroundImage: "./assets/images/android-icon-foreground.png",
-      backgroundImage: "./assets/images/android-icon-background.png",
-      monochromeImage: "./assets/images/android-icon-monochrome.png",
+      foregroundImage: "./assets/images/system/android-foreground.png",
+      backgroundImage: "./assets/images/system/android-background.png",
+      monochromeImage: "./assets/images/system/android-monochrome.png",
     },
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
@@ -107,7 +107,7 @@ const config: ExpoConfig = {
   web: {
     bundler: "metro",
     output: "static",
-    favicon: "./assets/images/favicon.png",
+    favicon: "./assets/images/system/favicon.png",
   },
   plugins: [
     "expo-asset",
@@ -128,7 +128,7 @@ const config: ExpoConfig = {
     [
       "expo-splash-screen",
       {
-        image: "./assets/images/splash-icon.png",
+        image: "./assets/images/system/splash-icon.png",
         imageWidth: 200,
         resizeMode: "contain",
         backgroundColor: "#08060f",

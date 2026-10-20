@@ -12,9 +12,9 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const GAME_ICON = require("../../assets/images/icon-gamepad.png");
-const BOOST_ICON = require("../../assets/images/icon-performance-boost.png");
-const OVERLAY_ICON = require("../../assets/images/icon-floating-overlay.png");
+const GAME_ICON = require("../../assets/images/icons/gamepad.png");
+const BOOST_ICON = require("../../assets/images/icons/performance-boost.png");
+const OVERLAY_ICON = require("../../assets/images/icons/floating-overlay.png");
 
 const games = [
   { title: "Shadow Strike", genre: "أكشن • أونلاين", accent: "#ff466d", progress: "92%" },
@@ -26,7 +26,7 @@ export default function HomeScreen() {
   const [selectedTab, setSelectedTab] = useState("الألعاب");
   const [boostOn, setBoostOn] = useState(false);
   const [overlayOpen, setOverlayOpen] = useState(false);
-  const player = useAudioPlayer(require("../../assets/audio/gameboost-calm-background.mp3"));
+  const player = useAudioPlayer(require("../../assets/audio/music/calm-background.mp3"));
 
   useEffect(() => {
     try {
@@ -40,7 +40,7 @@ export default function HomeScreen() {
 
   return (
     <ImageBackground
-      source={require("../../assets/images/gameboost-home-background.png")}
+      source={require("../../assets/images/backgrounds/home-background.png")}
       resizeMode="cover"
       style={styles.root}
     >
@@ -135,7 +135,7 @@ export default function HomeScreen() {
 
       <Modal visible={overlayOpen} transparent animationType="fade" onRequestClose={() => setOverlayOpen(false)}>
         <View style={styles.modalBackdrop}>
-          <ImageBackground source={require("../../assets/images/gameboost-floating-panel-background.png")} style={styles.overlayPanel} imageStyle={styles.overlayImage}>
+          <ImageBackground source={require("../../assets/images/backgrounds/floating-panel-background.png")} style={styles.overlayPanel} imageStyle={styles.overlayImage}>
             <View style={styles.overlayHeader}>
               <Text style={styles.overlayTitle}>GameBoost Overlay</Text>
               <Pressable onPress={() => setOverlayOpen(false)}><Text style={styles.closeText}>إغلاق</Text></Pressable>
