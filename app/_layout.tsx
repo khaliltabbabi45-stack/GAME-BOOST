@@ -8,6 +8,7 @@ import "react-native-reanimated";
 import { Platform } from "react-native";
 import "@/lib/_core/nativewind-pressable";
 import { ThemeProvider } from "@/lib/theme-provider";
+import { GameBoostSplash } from "@/components/gameboost-splash";
 import {
   SafeAreaFrameContext,
   SafeAreaInsetsContext,
@@ -32,6 +33,7 @@ export default function RootLayout() {
 
   const [insets, setInsets] = useState<EdgeInsets>(initialInsets);
   const [frame, setFrame] = useState<Rect>(initialFrame);
+  const [showSplash, setShowSplash] = useState(true);
 
   // Initialize Manus runtime for cookie injection from parent container
   useEffect(() => {
@@ -103,7 +105,7 @@ export default function RootLayout() {
         <SafeAreaProvider initialMetrics={providerInitialMetrics}>
           <SafeAreaFrameContext.Provider value={frame}>
             <SafeAreaInsetsContext.Provider value={insets}>
-              {content}
+              {showSplash ? <GameBoostSplash onFinished={() => setShowSplash(false)} /> : content}
             </SafeAreaInsetsContext.Provider>
           </SafeAreaFrameContext.Provider>
         </SafeAreaProvider>
@@ -113,7 +115,9 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider>
-      <SafeAreaProvider initialMetrics={providerInitialMetrics}>{content}</SafeAreaProvider>
+      <SafeAreaProvider initialMetrics={providerInitialMetrics}>
+        {showSplash ? <GameBoostSplash onFinished={() => setShowSplash(false)} /> : content}
+      </SafeAreaProvider>
     </ThemeProvider>
   );
 }
