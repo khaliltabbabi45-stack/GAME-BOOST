@@ -13,14 +13,15 @@
 - ملف `eas.json` لبناء APK.
 - سير عمل GitHub Actions في `.github/workflows/build-apk.yml`.
 
-## تشغيل البناء من GitHub
+## تشغيل البناء من GitHub (بدون حساب Expo)
 
-1. أنشئ حساباً في Expo على `expo.dev`.
-2. من جهازك شغّل: `npx eas-cli@latest login`.
-3. أنشئ رمز وصول من Expo وضعه في GitHub باسم السر `EXPO_TOKEN`:
-   - المستودع → Settings → Secrets and variables → Actions → New repository secret.
-4. شغّل Workflow باسم **Build GameBoost APK** من تبويب Actions.
-5. بعد انتهاء البناء سيظهر رابط تحميل APK في نتيجة تشغيل الـ Workflow وداخل حساب Expo.
+1. أنشئ مستودعاً جديداً على GitHub وارفع محتوى مجلد `gameboost` (يجب أن يكون `package.json` في جذر المستودع).
+2. افتح تبويب **Actions** ← اختر **Build APK (no Expo account needed)** ← **Run workflow**.
+3. انتظر انتهاء البناء (غالباً 10–20 دقيقة).
+4. افتح صفحة التشغيل المكتمل ونزّل الملف `gameboost-arena-apk` من قسم **Artifacts** (ملف ZIP بداخله APK).
+5. فك الضغط وثبّت الـ APK على هاتف أندرويد (فعّل «التثبيت من مصادر غير معروفة»).
+
+> بديل اختياري: `build-apk-eas.yml` يستخدم خوادم Expo ويتطلب حساب Expo وتشغيل `npx eas-cli init` مرة واحدة وسر `EXPO_TOKEN`.
 
 ## البناء من الجهاز
 

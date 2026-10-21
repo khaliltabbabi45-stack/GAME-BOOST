@@ -84,25 +84,10 @@ const config: ExpoConfig = {
     },
     predictiveBackGestureEnabled: false,
     package: env.androidPackage,
-    permissions: [
-      "POST_NOTIFICATIONS",
-      "SYSTEM_ALERT_WINDOW",
-      "PACKAGE_USAGE_STATS",
-      "KILL_BACKGROUND_PROCESSES",
-    ],
-    intentFilters: [
-      {
-        action: "VIEW",
-        autoVerify: true,
-        data: [
-          {
-            scheme: env.scheme,
-            host: "*",
-          },
-        ],
-        category: ["BROWSABLE", "DEFAULT"],
-      },
-    ],
+    versionCode: 1,
+    // Only permissions the app actually uses. Add SYSTEM_ALERT_WINDOW / PACKAGE_USAGE_STATS
+    // back only when a native overlay / usage-stats feature is implemented.
+    permissions: ["POST_NOTIFICATIONS"],
   },
   web: {
     bundler: "metro",

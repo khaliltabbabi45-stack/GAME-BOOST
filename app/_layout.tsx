@@ -34,6 +34,7 @@ export default function RootLayout() {
   const [insets, setInsets] = useState<EdgeInsets>(initialInsets);
   const [frame, setFrame] = useState<Rect>(initialFrame);
   const [showSplash, setShowSplash] = useState(true);
+  const handleSplashFinished = useCallback(() => setShowSplash(false), []);
 
   // Initialize Manus runtime for cookie injection from parent container
   useEffect(() => {
@@ -105,7 +106,7 @@ export default function RootLayout() {
         <SafeAreaProvider initialMetrics={providerInitialMetrics}>
           <SafeAreaFrameContext.Provider value={frame}>
             <SafeAreaInsetsContext.Provider value={insets}>
-              {showSplash ? <GameBoostSplash onFinished={() => setShowSplash(false)} /> : content}
+              {showSplash ? <GameBoostSplash onFinished={handleSplashFinished} /> : content}
             </SafeAreaInsetsContext.Provider>
           </SafeAreaFrameContext.Provider>
         </SafeAreaProvider>
@@ -116,7 +117,7 @@ export default function RootLayout() {
   return (
     <ThemeProvider>
       <SafeAreaProvider initialMetrics={providerInitialMetrics}>
-        {showSplash ? <GameBoostSplash onFinished={() => setShowSplash(false)} /> : content}
+        {showSplash ? <GameBoostSplash onFinished={handleSplashFinished} /> : content}
       </SafeAreaProvider>
     </ThemeProvider>
   );

@@ -1,5 +1,5 @@
-import { useAudioPlayer } from "expo-audio";
-import { useEffect, useMemo, useState } from "react";
+import { useAudioPlayer, type AudioPlayer } from "expo-audio";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -16,27 +16,75 @@ const GAME_ICON = require("../../assets/images/icons/gamepad.png");
 const BOOST_ICON = require("../../assets/images/icons/performance-boost.png");
 const OVERLAY_ICON = require("../../assets/images/icons/floating-overlay.png");
 
+const TABS = ["الألعاب", "المفضلة", "الأخيرة"] as const;
+type TabName = (typeof TABS)[number];
+
 const games = [
-  { title: "Shadow Strike", genre: "أكشن • أونلاين", accent: "#ff466d", progress: "92%" },
-  { title: "Neon Drift", genre: "سباق • أركيد", accent: "#00d9ff", progress: "78%" },
+  { title: "Shadow Strike", genre: "أكشن • أونلاين", accent: "#ff466d", progress: "92%", favorite: true, recent: true },
+  { title: "Neon Drift", genre: "سباق • أركيد", accent: "#00d9ff", progress: "78%", favorite: false, recent: true },
 ];
+
+function playEffect(player: AudioPlayer) {
+  try {
+    void player.seekTo(0);
+    player.play();
+  } catch {
+    // Audio is optional; never let a sound effect break the UI.
+  }
+}
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const [selectedTab, setSelectedTab] = useState("الألعاب");
+  const [selectedTab, setSelectedTab] = useState<TabName>("الألعاب");
   const [boostOn, setBoostOn] = useState(false);
   const [overlayOpen, setOverlayOpen] = useState(false);
-  const player = useAudioPlayer(require("../../assets/audio/music/calm-background.mp3"));
+  const music = useAudioPlayer(require("../../assets/audio/music/calm-background.mp3"));
+  const clickSfx = useAudioPlayer(require("../../assets/audio/effects/ui-soft-click.mp3"));
+  const boostSfx = useAudioPlayer(require("../../assets/audio/effects/boost-soft-confirm.mp3"));
 
   useEffect(() => {
     try {
-      player.play();
+      music.play();
     } catch {
       // Browsers may require the first user interaction before audio playback.
     }
-  }, [player]);
+    return () => {
+      try {
+        music.pause();
+      } catch {
+        // Player may already be released.
+      }
+    };
+  }, [music]);
+
+  const click = useCallback(() => playEffect(clickSfx), [clickSfx]);
+
+  const toggleBoost = useCallback(() => {
+    if (boostOn) {
+      try {
+        boostSfx.pause();
+      } catch {
+        // Player may already be released.
+      }
+    } else {
+      playEffect(boostSfx);
+    }
+    setBoostOn(!boostOn);
+  }, [boostOn, boostSfx]);
+
+  const openOverlay = useCallback(() => {
+    click();
+    setOverlayOpen(true);
+  }, [click]);
 
   const statusLabel = useMemo(() => (boostOn ? "التعزيز مفعل" : "جاهز للتعزيز"), [boostOn]);
+  const visibleGames = useMemo(
+    () =>
+      games.filter((game) =>
+        selectedTab === "المفضلة" ? game.favorite : selectedTab === "الأخيرة" ? game.recent : true,
+      ),
+    [selectedTab],
+  );
 
   return (
     <ImageBackground
@@ -63,7 +111,7 @@ export default function HomeScreen() {
             <Text style={styles.heroTitle}>{statusLabel}</Text>
             <Text style={styles.heroSubtitle}>استعد للعب بتركيز أعلى وبدون تشتيت</Text>
             <Pressable
-              onPress={() => setBoostOn((value) => !value)}
+              onPress={toggleBoost}
               style={({ pressed }) => [styles.boostButton, pressed && styles.pressed]}
             >
               <Image source={BOOST_ICON} style={styles.buttonIcon} />
@@ -83,15 +131,16 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.tabs}>
-          {["الألعاب", "المفضلة", "الأخيرة"].map((tab) => (
-            <Pressable key={tab} onPress={() => setSelectedTab(tab)} style={[styles.tab, selectedTab === tab && styles.activeTab]}>
+          {TABS.map((tab) => (
+            <Pressable key={tab} onPress={() => { click(); setSelectedTab(tab); }} style={[styles.tab, selectedTab === tab && styles.activeTab]}>
               <Text style={[styles.tabText, selectedTab === tab && styles.activeTabText]}>{tab}</Text>
             </Pressable>
           ))}
         </View>
 
         <View style={styles.gamesList}>
-          {games.map((game) => (
+          {visibleGames.length === 0 && <Text style={styles.emptyText}>لا توجد ألعاب هنا بعد</Text>}
+          {visibleGames.map((game) => (
             <View key={game.title} style={styles.gameCard}>
               <View style={[styles.gameArt, { borderColor: `${game.accent}88` }]}>
                 <Image source={GAME_ICON} style={styles.gameIcon} />
@@ -102,7 +151,7 @@ export default function HomeScreen() {
                 <Text style={styles.gameGenre}>{game.genre}</Text>
                 <View style={styles.progressTrack}><View style={[styles.progressFill, { width: game.progress as `${number}%`, backgroundColor: game.accent }]} /></View>
               </View>
-              <Pressable style={({ pressed }) => [styles.playButton, pressed && styles.pressed]}>
+              <Pressable onPress={click} style={({ pressed }) => [styles.playButton, pressed && styles.pressed]}>
                 <Text style={styles.playText}>تشغيل</Text>
               </Pressable>
             </View>
@@ -110,12 +159,12 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.toolsRow}>
-          <Pressable style={styles.toolCard} onPress={() => setOverlayOpen(true)}>
+          <Pressable style={styles.toolCard} onPress={openOverlay}>
             <Image source={OVERLAY_ICON} style={styles.toolIcon} />
             <Text style={styles.toolTitle}>القائمة العائمة</Text>
             <Text style={styles.toolCaption}>تجربة فوق الألعاب</Text>
           </Pressable>
-          <Pressable style={styles.toolCard}>
+          <Pressable style={styles.toolCard} onPress={toggleBoost}>
             <Image source={BOOST_ICON} style={styles.toolIcon} />
             <Text style={styles.toolTitle}>تحسين سريع</Text>
             <Text style={styles.toolCaption}>إعدادات آمنة للنظام</Text>
@@ -129,7 +178,7 @@ export default function HomeScreen() {
         <Text style={styles.navItem}>الإعدادات</Text>
       </View>
 
-      <Pressable style={styles.floatingButton} onPress={() => setOverlayOpen(true)}>
+      <Pressable style={styles.floatingButton} onPress={openOverlay}>
         <Image source={OVERLAY_ICON} style={styles.floatingIcon} />
       </Pressable>
 
@@ -138,7 +187,7 @@ export default function HomeScreen() {
           <ImageBackground source={require("../../assets/images/backgrounds/floating-panel-background.png")} style={styles.overlayPanel} imageStyle={styles.overlayImage}>
             <View style={styles.overlayHeader}>
               <Text style={styles.overlayTitle}>GameBoost Overlay</Text>
-              <Pressable onPress={() => setOverlayOpen(false)}><Text style={styles.closeText}>إغلاق</Text></Pressable>
+              <Pressable onPress={() => { click(); setOverlayOpen(false); }}><Text style={styles.closeText}>إغلاق</Text></Pressable>
             </View>
             <Text style={styles.overlayHint}>هذه معاينة للقائمة العائمة. تفعيل الظهور فوق التطبيقات يتم من إعدادات أندرويد.</Text>
             <View style={styles.overlayActions}>
@@ -213,5 +262,6 @@ const styles = StyleSheet.create({
   overlayAction: { alignItems: "center", gap: 7 },
   overlayActionIcon: { width: 42, height: 42 },
   overlayActionText: { color: "#fff", fontSize: 11, fontWeight: "800" },
+  emptyText: { color: "#8e849c", fontSize: 13, textAlign: "center", paddingVertical: 24 },
   pressed: { opacity: 0.72 },
 });

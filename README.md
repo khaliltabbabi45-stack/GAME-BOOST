@@ -66,19 +66,16 @@ npx eas-cli@latest build --platform android --profile production
 
 ## GitHub Actions
 
-The workflow is located at `.github/workflows/build-apk.yml` and can be started manually from the **Actions** tab.
+Two workflows live in `.github/workflows/`:
 
-Before running it, add the following repository secret:
+- `build-apk.yml` — **recommended, no Expo account needed.** Generates the native Android project with `expo prebuild` and builds a release APK with Gradle on GitHub's runners. Start it from **Actions → Build APK → Run workflow**, then download `gameboost-arena-apk` from the run's **Artifacts** section. The APK is signed with the default debug key, which is fine for sideloading and testing.
+- `build-apk-eas.yml` — optional EAS build. Needs an Expo account, `npx eas-cli init` run once locally (adds the EAS project id), and the `EXPO_TOKEN` repository secret.
 
-```text
-EXPO_TOKEN=<Expo access token>
-```
-
-The workflow installs dependencies, runs TypeScript validation, and starts the EAS Android APK build.
+For Google Play you must sign with your own upload keystore (EAS manages this for you).
 
 ## Android Permissions
 
-`app.config.ts` declares permissions related to notifications, overlay access, usage statistics, background-process handling, and audio playback. Some of these are special Android permissions and require explicit user approval from Android system settings. Android vendors and OS versions may restrict or ignore background-process termination requests.
+`app.config.ts` declares only `POST_NOTIFICATIONS`. Special permissions (`SYSTEM_ALERT_WINDOW`, `PACKAGE_USAGE_STATS`, `KILL_BACKGROUND_PROCESSES`) were removed because no code uses them yet; add them back together with the native feature that needs them. Android vendors and OS versions may restrict or ignore background-process termination requests.
 
 The floating menu in the current UI is a safe in-app preview. A production system-wide overlay requires a native Android implementation and a user-approved overlay permission.
 
@@ -91,14 +88,9 @@ All app artwork is stored as real image files rather than code-drawn icons:
 - Audio files are stored locally under `assets/audio`.
 - Asset locations are documented in `assets/ASSET_MANIFEST.md` and `assets/IMAGE_ASSET_URLS.json`.
 
-## Validation
+## Current scope
 
-The current source passes:
-
-```bash
-pnpm check
-pnpm lint
-```
+The UI is a working prototype: boost toggle, sounds (looping background music, click and boost effects), game tabs and the floating-menu preview are interactive, but the "boost" does not change any system setting and the games list is sample data.
 
 ## License
 
